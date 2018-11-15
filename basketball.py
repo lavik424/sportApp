@@ -11,6 +11,7 @@ class Basketball(AbstractSport):
         self.limits = [0,20]
         self.time_list = {'Tip-off':0,'1Q':1,'2Q':2,'HT':3,'3Q':4,'4Q':5,'OT':6}
         soup = self.get_main_soup()
+
         league = ''
         games = {}
         # gamesList=soup.find_all(class_="row-group") # retrieve all the games
@@ -37,8 +38,9 @@ class Basketball(AbstractSport):
 
 
 
-    def check_diff(self, game, wanted_diff,wanted_starting_time =0):
-        print(str(wanted_diff)+' points starting from '+wanted_starting_time)
+    def check_diff(self, game, wanted_diff,wanted_starting_time =''):
+        line = str(wanted_diff)+' points starting from '+wanted_starting_time
+        print(line)
         if wanted_starting_time in ['Tip-off','1Q']:
             return True
         scores = game.find_all(class_="sco3")

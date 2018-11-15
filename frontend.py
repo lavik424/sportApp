@@ -10,7 +10,7 @@ from football import Football
 # from winsound import SND_FILENAME
 from utils import MyException
 from tkinter import messagebox
-import sys, time
+import sys, time, six
 
 
 sports = {'foot': 'Football', 'tennis': 'Tennis', 'basket': 'Basketball'}
@@ -21,10 +21,13 @@ def start_gui():
 
     def handle_exception(*args):
         if sys.exc_info()[0] != MyException:
-            messagebox.showerror(message=repr(sys.exc_info()[1]))
-            controlled_exit()
+            t,v,tb = sys.exc_info()
+            raise six.reraise(t,v,tb)
             return
         ans = sys.exc_info()[1].res
+        if ans == -1:
+            messagebox.showerror('unable to proceed','Please check your internet connection')
+            return
         last_statement(conditions_ans=ans)
 
     def controlled_exit():

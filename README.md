@@ -1,7 +1,7 @@
 # sportApp
 
 A sport application for pc, written in python using tkinter package.
-Data was mined from  https://www.livescore.com using selenium package and chrome-driver.
+Data was mined from  https://www.livescore.com using selenium package, chrome-driver and BeautifulSoup package.
 I tried to use as many features as I could from tkinter and still keep them simple so you can learn from them.
  
 Helpful sites for tkinter:

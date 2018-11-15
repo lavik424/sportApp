@@ -54,10 +54,18 @@ class AbstractSport:
         # print(soup.prettify())
         driver.close()
 
-        # Get leagues and Tournaments names
         soup1 = soup.find(class_=[re.compile("content pb44")])  # main frame
         if soup1 is None:
             soup1 = soup.find(attrs={'data-type': "container"})
+        if soup1 is None:
+            if self.count_bad_attempts >= utils.MAX_ATTEMPTS_ALLOWED:
+
+                raise MyException(-1) # no connection
+            else:
+                self.count_bad_attempts += 1
+                return self.get_main_soup()
+        else:
+            self.count_bad_attempts = 0
         return soup1
 
     def get_all_matches_by_league(self):
@@ -137,9 +145,9 @@ class AbstractSport:
     def check_conditions_first_time(self, game,wanted_starting_time,wanted_diff=0):
         """
 
-        :param game:
-        :param wanted_starting_time:
-        :param wanted_diff:
+        :param game: beautiful soup element, contains info about the game
+        :param wanted_starting_time: string
+        :param wanted_diff: int
         :return:
         """
         curr_time_game = game.find('span').text
@@ -158,8 +166,8 @@ class AbstractSport:
     def check_conditions(self,wanted_starting_time,wanted_diff=0):
         """
         After the game have started. Try to meet the condition after
-        :param wanted_diff: from the app
-        :param wanted_starting_time: from the app
+        :param wanted_diff: int
+        :param wanted_starting_time: string
         :return: True if conditions met, False if the game ended w\o
         """
         print(time.ctime())
@@ -173,7 +181,7 @@ class AbstractSport:
             self.count_bad_attempts += 1
             self.check_conditions(wanted_starting_time,wanted_diff)
         elif self.check_time(game,wanted_starting_time) and\
-            self.check_diff(game,wanted_starting_time,wanted_diff):
+            self.check_diff(game,wanted_diff,wanted_starting_time):
             raise MyException(True)
         else:
             self.count_bad_attempts = 0
