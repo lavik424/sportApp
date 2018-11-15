@@ -7,7 +7,7 @@ class Tennis(AbstractSport):
         instead of querying the site twice (first leagues and then matches)
         :return: a dict mapping list of matches to their corresponding tournament_name
         """
-        self.time_list = {'S1': 0, 'S2': 1, 'S3': 2, 'S4': 3, 'S5': 4}  # TODO add tiebreak
+        self.time_list = {'Tiebreak':0,'S1': 1, 'S2': 2, 'S3': 3, 'S4': 4, 'S5': 5}  # TODO add tiebreak
         soup = self.get_main_soup()
         tournament_name = ''
         games = {}
@@ -16,9 +16,10 @@ class Tennis(AbstractSport):
         for div in divs:
             if div.find(class_=[re.compile("left")]):
                 tournament = div.find(class_=[re.compile("left")])
-                temp_tournament = tournament.find('strong').get_text()
-                temp_tournament += ' '
-                temp_tournament += tournament.find(class_=[re.compile("hidden-xxs")]).get_text()
+                temp_tournament = tournament.find('strong').text
+                # temp_tournament += ' ' #TODO get second name correctly
+                # second_name = tournament.find(class_=[re.compile("hidden-xxs")])
+                # temp_tournament += second_name.get_text() if second_name else ''
                 if temp_tournament == tournament_name:
                     continue
                 else:
@@ -38,4 +39,12 @@ class Tennis(AbstractSport):
 
 
     def check_tiebreak(self,game):
-        pass
+        scores = game.find_all(class_=[re.compile("sco2")])
+        scores1 = scores[0].find_all(class_=[re.compile("col")])
+        scores2 = scores[1].find_all(class_=[re.compile("col")])
+        for i in range(len(scores1)):
+            if scores1[i].text == '' or scores2[i].text == '':
+                return False
+            if TIEBREAK_SCORE in scores1[i].text and TIEBREAK_SCORE in scores2[i].text:
+                return True
+        return False

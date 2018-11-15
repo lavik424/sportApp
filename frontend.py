@@ -10,7 +10,8 @@ from football import Football
 # from winsound import SND_FILENAME
 from utils import MyException
 from tkinter import messagebox
-import sys
+import sys, time
+
 
 sports = {'foot': 'Football', 'tennis': 'Tennis', 'basket': 'Basketball'}
 sport = None
@@ -24,7 +25,7 @@ def start_gui():
             controlled_exit()
             return
         ans = sys.exc_info()[1].res
-        last_statment(conditions_ans=ans)
+        last_statement(conditions_ans=ans)
 
     def controlled_exit():
         if messagebox.askokcancel("Quit", "Do you really wish to quit?"):
@@ -81,8 +82,6 @@ def start_gui():
         for i in range(0, len(lst), 2):
             list2.itemconfigure(i, background='#90EE90')
         sentlbl.config(text='Please select one game to get notification')
-        list1.bind('<Double-1>', already_selected_league)
-        list1.bind('<Return>', already_selected_league)
         list2.bind('<Double-1>', select_match)
 
 
@@ -146,14 +145,13 @@ def start_gui():
         """
         line = 'You have selected to get notifications for ' + sport.game_name
         mes_notifi_up.config(text=line)
-        mes_notifi_up.update_idletasks()
         mes_notifi_down.config(text='You will receive a message when the conditions met')
-        mes_notifi_down.update_idletasks()
-        sport.query_game(diffVar.get(),timeToCheck.get())
+        root.update_idletasks()
+        sport.query_game(timeToCheck.get(),diffVar.get())
 
 
 
-    def last_statment(conditions_ans,*args):
+    def last_statement(conditions_ans,*args):
         """
         Draw last message to user,
         :param conditions_ans: True if conditions were met, False otherwise
@@ -166,11 +164,12 @@ def start_gui():
             print('Conditions were met')
             line += ' was achieved!!'
             # PlaySound('D:/elvis_riverside.wav', SND_FILENAME)
-            messagebox.askyesno(message='Great Success!!')
+            message = 'Great Success!! ' + time.ctime()
+            messagebox.showinfo(message=message)
         else:
             print('Game ended and Conditions were not met')
             line += ' was not achieved..'
-            messagebox.askyesno(message='Bummer!!')
+            messagebox.showinfo(message='Bummer!!')
         mes_notifi_up.config(text=line)
         mes_notifi_down.destroy()
 
@@ -264,12 +263,15 @@ def start_gui():
     list2.grid(row=1,column=3,rowspan=10,columnspan=2,sticky=(N, W, E, S))
     # sb2=Scrollbar(gameFrame)
     sb2=Scrollbar(games_frame)
-    sb2.grid(row=1,column=2,rowspan=10,sticky=W)
+    sb2.grid(row=1,column=2,rowspan=10,sticky=(N, W, E, S))
     list2.configure(yscrollcommand=sb2.set)
     sb2.configure(command=list2.yview)
 
 
     root.protocol("WM_DELETE_WINDOW", controlled_exit)
+
+
+
     Tk.report_callback_exception = handle_exception
 
 

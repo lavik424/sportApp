@@ -10,6 +10,9 @@ MINUTES = 60
 HOURS_ADAY = 24
 DELAY = 120
 
+TIEBREAK_SCORE = '6'
+
+
 class MyException(Exception):
     def __init__(self,res):
         self.res = res

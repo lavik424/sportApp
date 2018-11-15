@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.options import Options
 import re
 from bs4 import BeautifulSoup
 import utils
-from utils import MINUTES,SECONDS, HOURS_ADAY, DELAY, SECONDS_TO_WAIT
+from utils import MINUTES,SECONDS, HOURS_ADAY, DELAY, SECONDS_TO_WAIT, TIEBREAK_SCORE
 from datetime import datetime
 import sched, time
 from utils import MyException
@@ -162,7 +162,6 @@ class AbstractSport:
         :param wanted_starting_time: from the app
         :return: True if conditions met, False if the game ended w\o
         """
-        print(time.time())
         print(time.ctime())
         if self.count_bad_attempts >= utils.MAX_ATTEMPTS_ALLOWED:
             raise MyException(False)
@@ -183,14 +182,13 @@ class AbstractSport:
             self.scheduler.run()
 
     def check_time(self, game, wanted_starting_time,wanted_diff=0):
-        if wanted_starting_time == 'Tiebreak': # only for tennis
-            self.check_once = True
-            return self.check_tiebreak(game)
         curr_time_game = game.find('span').text
         if ":" in curr_time_game: # game didnt start
             print('game did not start')
             return False
         self.check_once = True
+        if wanted_starting_time == 'Tiebreak': # only for tennis
+            return self.check_tiebreak(game)
         assert curr_time_game in self.time_list.keys()
         return self.time_list[curr_time_game] >= self.time_list[wanted_starting_time]
 

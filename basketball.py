@@ -37,7 +37,8 @@ class Basketball(AbstractSport):
 
 
 
-    def check_diff(self, game, wanted_diff,wanted_starting_time =''):
+    def check_diff(self, game, wanted_diff,wanted_starting_time =0):
+        print(str(wanted_diff)+' points starting from '+wanted_starting_time)
         if wanted_starting_time in ['Tip-off','1Q']:
             return True
         scores = game.find_all(class_="sco3")
