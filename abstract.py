@@ -3,12 +3,12 @@ from selenium.webdriver.chrome.options import Options
 import re
 from bs4 import BeautifulSoup
 import utils
-from utils import MINUTES,SECONDS, HOURS_ADAY, DELAY, SECONDS_TO_WAIT, TIEBREAK_SCORE
+from utils import MINUTES,SECONDS, HOURS_ADAY, DELAY, CONNECTION_ERROR, SUCCESS, FAILURE
 from datetime import datetime
 import sched, time
-from utils import MyException
+from utils import MyException, TIEBREAK_SCORE
 
-finished_game = ['FT','Postp.','OT','Ret.','W.O.']
+finished_game = ['FT','Postp.','OT','Ret.','W.O.','Canc.']
 
 class AbstractSport:
     """
@@ -60,7 +60,7 @@ class AbstractSport:
         if soup1 is None:
             if self.count_bad_attempts >= utils.MAX_ATTEMPTS_ALLOWED:
 
-                raise MyException(-1) # no connection
+                raise MyException(CONNECTION_ERROR) # no connection
             else:
                 self.count_bad_attempts += 1
                 return self.get_main_soup()
@@ -112,7 +112,7 @@ class AbstractSport:
         :return:
         """
         if self.count_bad_attempts >= utils.MAX_ATTEMPTS_ALLOWED:
-            raise MyException(False)
+            raise MyException(FAILURE)
         soup = self.get_main_soup()
         game = soup.find(attrs={'data-id':self.game_id})
         if game is None:
@@ -172,17 +172,17 @@ class AbstractSport:
         """
         print(time.ctime())
         if self.count_bad_attempts >= utils.MAX_ATTEMPTS_ALLOWED:
-            raise MyException(False)
+            raise MyException(FAILURE)
         soup = self.get_main_soup()
         game = soup.find(attrs={'data-id':self.game_id})
         if game.find(class_='row-group live') is None and self.check_once: #game is over and we tried to at least once to test
-            raise MyException(False)
+            raise MyException(FAILURE)
         if game is None:
             self.count_bad_attempts += 1
             self.check_conditions(wanted_starting_time,wanted_diff)
         elif self.check_time(game,wanted_starting_time) and\
             self.check_diff(game,wanted_diff,wanted_starting_time):
-            raise MyException(True)
+            raise MyException(SUCCESS)
         else:
             self.count_bad_attempts = 0
             self.scheduler.enter(DELAY,1,action=self.check_conditions,
@@ -190,6 +190,13 @@ class AbstractSport:
             self.scheduler.run()
 
     def check_time(self, game, wanted_starting_time,wanted_diff=0):
+        """
+
+        :param game:
+        :param wanted_starting_time:
+        :param wanted_diff:
+        :return:
+        """
         curr_time_game = game.find('span').text
         if ":" in curr_time_game: # game didnt start
             print('game did not start')

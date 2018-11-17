@@ -6,9 +6,9 @@ from tkinter import ttk
 from basketball import Basketball
 from tennis import Tennis
 from football import Football
-# from winsound import PlaySound
-# from winsound import SND_FILENAME
-from utils import MyException
+from winsound import PlaySound
+from winsound import SND_FILENAME
+from utils import MyException, CONNECTION_ERROR, SUCCESS, FAILURE
 from tkinter import messagebox
 import sys, time, six
 
@@ -25,7 +25,7 @@ def start_gui():
             raise six.reraise(t,v,tb)
             return
         ans = sys.exc_info()[1].res
-        if ans == -1:
+        if ans == CONNECTION_ERROR:
             messagebox.showerror('unable to proceed','Please check your internet connection')
             return
         last_statement(conditions_ans=ans)
@@ -35,7 +35,7 @@ def start_gui():
             root.destroy()
 
     def restart():
-        if messagebox.askokcancel("Restart", "Do you really wish to restart?"):
+        if messagebox.askokcancel("Restart", "Restart captain?"):
             root.destroy()
             start_gui()
 
@@ -163,11 +163,11 @@ def start_gui():
         """
         line = 'In ' + sport.game_name
         line += ' a difference of ' + str(diffVar.get()) + ' points starting from ' + timeToCheck.get()
-        if conditions_ans:
+        if conditions_ans == SUCCESS:
             print('Conditions were met')
             line += ' was achieved!!'
-            # PlaySound('D:/elvis_riverside.wav', SND_FILENAME)
-            message = 'Great Success!! ' + time.ctime()
+            PlaySound('C:/Windows/media/Alarm01.wav', SND_FILENAME)
+            message = 'Its time to start watching!! ' + time.ctime()
             messagebox.showinfo(message=message)
         else:
             print('Game ended and Conditions were not met')
