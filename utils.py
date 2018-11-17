@@ -17,7 +17,7 @@ HOURS_ADAY = 24
 DELAY = 120
 
 TIEBREAK_SCORE = '6'
-
+SOCCER_GAME_LENGTH = 91
 
 class MyException(Exception):
     def __init__(self,res):

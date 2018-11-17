@@ -94,7 +94,7 @@ def start_gui():
         sentlbl.config(text='You have already selected a league..')
 
     def already_selected_match(*args):
-        sentlbl.config(text='You have already selected a match..')
+        sentlbl.config(text='You have already selected a match.. you can restart')
 
 
     def select_match(*args):
@@ -132,16 +132,13 @@ def start_gui():
             line += ' is currently at ' + sport.game_time
 
         mes_game_details.config(text=line)
-        b2 = ttk.Button(notification, text='Get notifications', width=20,
-                        command=start_query)
-        b2.grid(column=2, row=1, sticky=W, padx=20)
         if sport.limits is not None:
             diff_spinbox = ttk.Spinbox(diff, from_=sport.limits[0],
                                        to=sport.limits[1],textvariable=diffVar)
             diff_spinbox.set(sport.limits[0])
             diff_spinbox.grid(row=0, column=0)
         if sport.time_list is not None:
-            time_list = list(sport.time_list.keys())
+            time_list = sport.get_time_list()
             timeToCheck.set(time_list[0])
             if sport.game_id is not '':
                 time_mb = ttk.Menubutton(checking_time, textvariable=timeToCheck)
@@ -168,11 +165,13 @@ def start_gui():
         :param args:
         :return:
         """
+        get_noti_button.configure(command=already_selected_match)
         line = 'You have selected to get notifications for ' + sport.game_name
         mes_notifi_up.config(text=line)
         mes_notifi_down.config(text='You will receive a message when the conditions met')
         root.update_idletasks()
         sport.query_game(timeToCheck.get(),diffVar.get())
+
 
 
 
@@ -270,6 +269,10 @@ def start_gui():
     restart_button = ttk.Button(c,text='Restart',width=20,
                     command=restart)
     restart_button.grid(column=0, row=10,columnspan=2,  sticky=N)
+
+    get_noti_button = ttk.Button(notification, text='Get notifications', width=20,
+                    command=start_query)
+    get_noti_button.grid(column=2, row=1, sticky=W, padx=20)
 
     #===============================================================================
     # ListBox

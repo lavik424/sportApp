@@ -33,9 +33,26 @@ class Tennis(AbstractSport):
                 game = div.find_all(class_="ten-ply")
                 s = game[0].text + " Vs. " + game[1].text
 
-                games[s] = div.get("data-id")
+                games[s] = (div.get("data-id"),div.find('span').text)
         if len(games):
             self.games_map[tournament_name] = games
+
+
+    def check_time(self, game, wanted_starting_time,wanted_diff=0):
+        """
+
+        :param game:
+        :param wanted_starting_time:
+        :param wanted_diff:
+        :return:
+        """
+        curr_time_game = game.find('span').text
+        if ":" in curr_time_game: # game didnt start
+            print('game did not start')
+            return False
+        self.check_once = True
+        if wanted_starting_time == 'Tiebreak': # only for tennis
+            return self.check_tiebreak(game)
 
 
     def check_tiebreak(self,game):

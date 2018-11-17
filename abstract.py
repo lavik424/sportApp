@@ -6,9 +6,9 @@ import utils
 from utils import MINUTES,SECONDS, HOURS_ADAY, DELAY, CONNECTION_ERROR, SUCCESS, FAILURE
 from datetime import datetime
 import sched, time
-from utils import MyException, TIEBREAK_SCORE
+from utils import MyException, TIEBREAK_SCORE, SOCCER_GAME_LENGTH
 
-finished_game = ['FT','Postp.','OT','Ret.','W.O.','Canc.']
+finished_game = ['FT','Postp.','OT','Ret.','W.O.','Canc.','AET','AP']
 
 class AbstractSport:
     """
@@ -178,7 +178,7 @@ class AbstractSport:
             raise MyException(FAILURE)
         soup = self.get_main_soup()
         game = soup.find(attrs={'data-id':self.game_id})
-        if game.find(class_='row-group live') is None and self.check_once: #game is over and we tried to at least once to test
+        if 'live' not in game['class'] and self.check_once: #game is over and we tried to at least once to test
             raise MyException(FAILURE)
         if game is None:
             self.count_bad_attempts += 1
@@ -200,15 +200,7 @@ class AbstractSport:
         :param wanted_diff:
         :return:
         """
-        curr_time_game = game.find('span').text
-        if ":" in curr_time_game: # game didnt start
-            print('game did not start')
-            return False
-        self.check_once = True
-        if wanted_starting_time == 'Tiebreak': # only for tennis
-            return self.check_tiebreak(game)
-        assert curr_time_game in self.time_list.keys()
-        return self.time_list[curr_time_game] >= self.time_list[wanted_starting_time]
+        raise NotImplementedError
 
 
     def check_diff(self,game,wanted_diff,wanted_starting_time=''):
@@ -221,3 +213,5 @@ class AbstractSport:
         """
         return True
 
+    def get_time_list(self):
+        pass

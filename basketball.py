@@ -47,3 +47,23 @@ class Basketball(AbstractSport):
         score1 = int(scores[0].find('strong').text)
         score2 = int(scores[1].find('strong').text)
         return abs(score1-score2) <= wanted_diff
+
+    def check_time(self, game, wanted_starting_time,wanted_diff=0):
+        """
+
+        :param game:
+        :param wanted_starting_time:
+        :param wanted_diff:
+        :return:
+        """
+        curr_time_game = game.find('span').text
+        if ":" in curr_time_game: # game didnt start
+            print('game did not start')
+            return False
+        self.check_once = True
+        assert curr_time_game in self.time_list.keys()
+        return self.time_list[curr_time_game] >= self.time_list[wanted_starting_time]
+
+
+    def get_time_list(self):
+        return list(self.time_list.keys())
