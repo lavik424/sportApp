@@ -32,7 +32,7 @@ class Basketball(AbstractSport):
                 game = div.find_all(class_="bas-ply")
                 s = game[0].text + " Vs. " + game[1].text
 
-                games[s] = div.get("data-id")
+                games[s] = (div.get("data-id"),div.find('span').text)
         if len(games):
             self.games_map[league] = games
 

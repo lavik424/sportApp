@@ -74,6 +74,8 @@ def start_gui():
         :param args: from below
         :return: massage and list of games by corresponding league
         """
+        gameList.set('')
+        notification.grid_forget()
         idxs = list1.curselection()[0]
         temp = leagueList.get().split(sep=',')
         name = ''.join(filter(str.isalpha,temp[idxs]))
@@ -105,10 +107,14 @@ def start_gui():
         temp = gameList.get().split(sep=',')
         sport.game_name = temp[idxs]
         game_name = ''.join(filter(str.isalpha,temp[idxs]))
-        sport.set_game_id(game_name)
-        set_notification_frame()
+        if sport.game_time == '': # not first time
+            sport.set_game_id(game_name)
+            set_notification_frame()
+        else:
+            sport.set_game_id(game_name)
+            set_notification_frame2()
+
         sentlbl.config(text='')
-        list2.bind('<Double-1>',already_selected_match)
 
 
 
@@ -119,9 +125,16 @@ def start_gui():
         :return:
         """
         notification.grid(column=0, row=5, columnspan=5, sticky=(N, W, E, S))
+        line = sport.game_name
+        if ':' in sport.game_time:
+            line += ' is starting at ' + sport.game_time
+        else:
+            line += ' is currently at ' + sport.game_time
+
+        mes_game_details.config(text=line)
         b2 = ttk.Button(notification, text='Get notifications', width=20,
                         command=start_query)
-        b2.grid(column=2, row=0, sticky=W, padx=20)
+        b2.grid(column=2, row=1, sticky=W, padx=20)
         if sport.limits is not None:
             diff_spinbox = ttk.Spinbox(diff, from_=sport.limits[0],
                                        to=sport.limits[1],textvariable=diffVar)
@@ -130,14 +143,23 @@ def start_gui():
         if sport.time_list is not None:
             time_list = list(sport.time_list.keys())
             timeToCheck.set(time_list[0])
-            time_mb = ttk.Menubutton(checking_time, textvariable=timeToCheck)
-            time_mb.menu = Menu(time_mb, tearoff=0)
-            time_mb['menu'] = time_mb.menu
-            for t in time_list:
-                time_mb.menu.add_radiobutton(label=t, variable=timeToCheck)
-            time_mb.grid()
+            if sport.game_id is not '':
+                time_mb = ttk.Menubutton(checking_time, textvariable=timeToCheck)
+                time_mb.menu = Menu(time_mb, tearoff=0)
+                time_mb['menu'] = time_mb.menu
+                for t in time_list:
+                    time_mb.menu.add_radiobutton(label=t, variable=timeToCheck)
+                time_mb.grid()
 
-
+    def set_notification_frame2(*args):
+        notification.grid_forget()
+        notification.grid(column=0, row=5, columnspan=5, sticky=(N, W, E, S))
+        line = sport.game_name
+        if ':' in sport.game_time:
+            line += ' is starting at ' + sport.game_time
+        else:
+            line += ' is currently at ' + sport.game_time
+        mes_game_details.config(text=line)
 
 
     def start_query(*args):
@@ -206,11 +228,11 @@ def start_gui():
     leagues_frame.grid(row=1,column=0,sticky=NW)
 
 
-    notification = ttk.LabelFrame(c,text='Notification Options')#,padx=5, pady=5)
+    notification = ttk.LabelFrame(c,text='Notification Options')
     diff = ttk.LabelFrame(notification,text='Difference',padding=[5,5])
-    diff.grid(column=0,row=0,sticky=W)
-    checking_time = ttk.LabelFrame(notification,text='Start checking in')#,padx=5, pady=5)
-    checking_time.grid(column=1,row=0,sticky=(N, W, E, S))
+    diff.grid(column=0,row=1,sticky=W)
+    checking_time = ttk.LabelFrame(notification,text='Start checking in')
+    checking_time.grid(column=1,row=1,sticky=(N, W, E, S))
 
 
     #===============================================================================
@@ -220,11 +242,11 @@ def start_gui():
     sentlbl = ttk.Label(sport_frame, anchor='center')
     sentlbl.grid(column=0, row=5, columnspan=2, sticky=S, pady=5, padx=5)
     mes_notifi_up = Message(notification,width=600)
-    mes_notifi_up.grid(column=0, row=3, columnspan=5, sticky=N)
+    mes_notifi_up.grid(column=0, row=4, columnspan=5, sticky=N)
     mes_notifi_down = Label(notification)
-    mes_notifi_down.grid(column=0, row=4, columnspan=5, sticky=N)
-
-
+    mes_notifi_down.grid(column=0, row=5, columnspan=5, sticky=N)
+    mes_game_details = Message(notification,width=600)
+    mes_game_details.grid(column=0, row=0, columnspan=5, sticky=N)
 
     #===============================================================================
     # Radiobutton
@@ -261,10 +283,9 @@ def start_gui():
     sb1.configure(command=list1.yview)
 
     ### ListBox - Games###
-    # list2=Listbox(gameFrame, height=15, width=25, listvariable=gameList)
+
     list2=Listbox(games_frame, height=15, width=50, listvariable=gameList)
     list2.grid(row=1,column=3,rowspan=10,columnspan=2,sticky=(N, W, E, S))
-    # sb2=Scrollbar(gameFrame)
     sb2=Scrollbar(games_frame)
     sb2.grid(row=1,column=2,rowspan=10,sticky=(N, W, E, S))
     list2.configure(yscrollcommand=sb2.set)

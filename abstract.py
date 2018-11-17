@@ -35,6 +35,7 @@ class AbstractSport:
         self.league = ''
         self.game_name = ''
         self.game_id = ''
+        self.game_time = ''
         self.count_bad_attempts = 0
         self.limits = None
         self.time_list = None
@@ -103,7 +104,9 @@ class AbstractSport:
         dic = {(''.join(filter(str.isalpha, key))): v for key, v in self.games_map.items()}
         dic = dic[self.league]
         dic = {(''.join(filter(str.isalpha,key))):v for key,v in dic.items()}
-        self.game_id = dic[game_name]
+        self.game_id = dic[game_name][0]
+        self.game_time = dic[game_name][1]
+
 
 
     def query_game(self,wanted_starting_time,wanted_diff=0):
