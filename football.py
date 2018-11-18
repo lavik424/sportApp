@@ -68,3 +68,18 @@ class Football(AbstractSport):
 
     def get_time_list(self):
         return self.time_list
+
+
+    def check_diff(self,game,wanted_diff,wanted_starting_time=''):
+        """
+        Calculate the difference between scores of the 2 teams. Not all classes need to implement
+        :param game: BeautifulSoup element contains the game's details
+        :param wanted_diff: difference in score the user wishes to have
+        :param wanted_starting_time: quarter the user want to start checking conditions
+        :return: True if condition is meeting, False otherwise
+        """
+        if wanted_starting_time == '0':
+            return True
+        score1 = int(game.find(class_='hom').text)
+        score2 = int(game.find(class_='awy').text)
+        return abs(score1-score2) <= wanted_diff

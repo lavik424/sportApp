@@ -178,7 +178,8 @@ class AbstractSport:
             raise MyException(FAILURE)
         soup = self.get_main_soup()
         game = soup.find(attrs={'data-id':self.game_id})
-        if 'live' not in game['class'] and self.check_once: #game is over and we tried to at least once to test
+        if ('live' not in game['class'] and game.find(class_=[re.compile("live")]) is None)\
+                and self.check_once: #game is over and we tried at least once to test
             raise MyException(FAILURE)
         if game is None:
             self.count_bad_attempts += 1

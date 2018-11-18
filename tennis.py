@@ -7,7 +7,7 @@ class Tennis(AbstractSport):
         instead of querying the site twice (first leagues and then matches)
         :return: a dict mapping list of matches to their corresponding tournament_name
         """
-        self.time_list = {'Tiebreak':0,'S1': 1, 'S2': 2, 'S3': 3, 'S4': 4, 'S5': 5}  # TODO add tiebreak
+        self.time_list = {'Tiebreak':0,'S1': 1, 'S2': 2, 'S3': 3, 'S4': 4, 'S5': 5}
         soup = self.get_main_soup()
         tournament_name = ''
         games = {}

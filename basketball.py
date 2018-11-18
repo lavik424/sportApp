@@ -22,7 +22,7 @@ class Basketball(AbstractSport):
                 if temp_league == league:
                     continue
                 else:
-                    if league != '':
+                    if league != '' and len(games):
                         self.games_map[league] = games
                     league = temp_league
                     games = {}

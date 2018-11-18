@@ -65,7 +65,6 @@ def start_gui():
             list1.itemconfigure(i, background='#f0f0ff')
         sentlbl.config(text='')
         list1.bind('<Double-1>', show_games)
-        root.bind('<Return>', show_games)
 
 
     def show_games(*args):
@@ -166,6 +165,8 @@ def start_gui():
         :return:
         """
         get_noti_button.configure(command=already_selected_match)
+        list1.bind('<Double-1>',already_selected_match)
+        list2.bind('<Double-1>', already_selected_match)
         line = 'You have selected to get notifications for ' + sport.game_name
         mes_notifi_up.config(text=line)
         mes_notifi_down.config(text='You will receive a message when the conditions met')
